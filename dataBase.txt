@@ -1,3 +1,0 @@
-Elements:	2
-barel	1234321
-yael	12321
