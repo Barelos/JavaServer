@@ -1,62 +1,40 @@
 import java.net.*;
 import java.io.*;
-
+/**
+A class to handle the comunication between server and clients
+Redundent when comunication is simple but essential in the future
+*/
 public class Protocol {
-    private static final int WAITING = 0;
-    private static final int SENTKNOCKKNOCK = 1;
-    private static final int SENTCLUE = 2;
-    private static final int ANOTHER = 3;
+  public static final int OK = 1;
+  public static final int NAME = 2;
+  public static final int PASS = 3;
 
-    private static final int NUMJOKES = 5;
+  public static final int LOG = 1;
+  public static final int SIGN = 2;
+  public static final int CHANGE = 3;
 
-    private int state = WAITING;
-    private int currentJoke = 0;
+  private static final String delimiter = "-";
 
-    private String[] clues = { "Turnip", "Little Old Lady", "Atch", "Who", "Who" };
-    private String[] answers = { "Turnip the heat, it's cold in here!",
-                                 "I didn't know you could yodel!",
-                                 "Bless you!",
-                                 "Is there an owl in here?",
-                                 "Is there an echo in here?" };
+  /**
+  Parse username, password and request into server request format
+  @param username the username
+  @param password the password
+  @param r a request type i.e LOG,SIGN or CHANGE
+  @return a string in server request form
+  */
+  public static  String makeClientRequest(String username, String password, int r){
+    String reply = Integer.toString(r) + delimiter;
+    reply += username + delimiter + password;
+    return reply;
+  }
 
-    public String processInput(String theInput) {
-        String theOutput = null;
-
-        if (state == WAITING) {
-            theOutput = "Knock! Knock!";
-            state = SENTKNOCKKNOCK;
-        } else if (state == SENTKNOCKKNOCK) {
-            if (theInput.equalsIgnoreCase("Who's there?")) {
-                theOutput = clues[currentJoke];
-                state = SENTCLUE;
-            } else {
-                theOutput = "You're supposed to say \"Who's there?\"! " +
-                "Try again. Knock! Knock!";
-            }
-        } else if (state == SENTCLUE) {
-            if (theInput.equalsIgnoreCase(clues[currentJoke] + " who?")) {
-                theOutput = answers[currentJoke] + " Want another? (y/n)";
-                state = ANOTHER;
-            } else {
-                theOutput = "You're supposed to say \"" +
-                clues[currentJoke] +
-                " who?\"" +
-                "! Try again. Knock! Knock!";
-                state = SENTKNOCKKNOCK;
-            }
-        } else if (state == ANOTHER) {
-            if (theInput.equalsIgnoreCase("y")) {
-                theOutput = "Knock! Knock!";
-                if (currentJoke == (NUMJOKES - 1))
-                    currentJoke = 0;
-                else
-                    currentJoke++;
-                state = SENTKNOCKKNOCK;
-            } else {
-                theOutput = "Bye.";
-                state = WAITING;
-            }
-        }
-        return theOutput;
-    }
+  /**
+  Parse from request form into array of data
+  @param request the client request
+  @return an array of strings
+  */
+  public static String[] parseUserRequest(String request){
+    String[] parts = request.split(delimiter);
+    return parts;
+  }
 }
