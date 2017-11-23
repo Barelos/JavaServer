@@ -100,6 +100,7 @@ public class ClientHandler extends Thread{
       DataBase.letGo(); // let database know we do not need it
       // close socket when done
       this.socket.close();
+      ListenThread.downActive(); // allow one more thread
     } catch(SocketException e){
       System.err.println("Done");
     } catch (Throwable e){

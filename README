@@ -2,13 +2,12 @@ Abstract:
 A simple server that in the end will be capable of:
 
     JOB                                    | STATUS
-  1) managing up to 10 users at a time     |
-  2) verifying passwords                   |
-  3) keeping a list of known users         |
+  1) managing up to N users at a time      | DONE :-)
+  2) verifying passwords                   | DONE :-)
+  3) keeping a list of known users         | DONE :-)
   4) hashing passwords                     |
   5) encrypting and decrypting using RSA   |
 
-Current: managing 10 users
-TODO:
-  1) keep an array of working threads
-  2) update the array when thread is done
+Current: Hashing passwords
+  1) write a hash function
+  2) save only hashed password
