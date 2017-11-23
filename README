@@ -1,0 +1,14 @@
+Abstract:
+A simple server that in the end will be capable of:
+
+    JOB                                    | STATUS
+  1) managing up to 10 users at a time     |
+  2) verifying passwords                   |
+  3) keeping a list of known users         |
+  4) hashing passwords                     |
+  5) encrypting and decrypting using RSA   |
+
+Current: managing 10 users
+TODO:
+  1) keep an array of working threads
+  2) update the array when thread is done
