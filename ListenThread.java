@@ -14,11 +14,11 @@ public class ListenThread extends Thread{
     return activeThreads;
   }
 
-  public static synchronized int upActive(){
+  public static synchronized void upActive(){
     activeThreads++;
   }
 
-  public static synchronized int downActive(){
+  public static synchronized void downActive(){
     activeThreads--;
   }
 

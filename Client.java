@@ -30,8 +30,10 @@ public class Client{
       System.out.println(reply);
       serverSocket.close();
     // if could not connect to server print error to user
+    }catch(SocketException e){
+      System.err.println("Somthing went wrong with server");
     }catch (IOException e){
-      System.out.println("Failed connectin to server");
+      System.err.println("Failed connectin to server");
     }
   }
 }

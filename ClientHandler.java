@@ -1,5 +1,7 @@
 import java.net.*;
 import java.io.*;
+import java.util.Random;
+import java.security.MessageDigest;
 /**
 A thread that handles a single client.
 @author Barel Levy
@@ -7,6 +9,10 @@ A thread that handles a single client.
 public class ClientHandler extends Thread{
   protected Socket socket; // the client's socket
   private DataBase db; // instance of DataBase which is a singelton
+  // for the salt
+  private final int SALT_LEN = 20; // len of salt
+  private final int LOWER = 46;
+  private final int UPPER = 126;
 
   /**
   A constructor for the ClientHandler class
@@ -31,12 +37,14 @@ public class ClientHandler extends Thread{
     }
     // test if the password is correct
     String onServer = this.db.getPassword(name);
-    int reply = pass.equals(onServer) ? Protocol.OK : Protocol.PASS;
+    String[] parts = onServer.split("-");
+    String hased = hash(pass + parts[1]); // hash with salt
+    int reply = hased.equals(parts[0]) ? Protocol.OK : Protocol.PASS;
     // print and reply accordingly
     if (reply == Protocol.OK){
-      System.out.println(name + " logged in with password " + pass);
+      System.out.println(name + " logged in");
     }else{
-      System.out.println(name + " tried to login with wrong  password " + pass);
+      System.out.println(name + " tried to login with wrong password");
     }
     return reply;
   }
@@ -49,11 +57,13 @@ public class ClientHandler extends Thread{
   */
   private int signUser(String name, String pass){
     if (this.db.userIn(name)){
-      System.out.println("Name " + name + " in already in");
+      System.out.println("Name " + name + " is already in");
       return Protocol.NAME;
     }
+    String salt = createSalt();
+    pass = hash(pass + salt) + "-" + salt;
     this.db.setPassword(name, pass);
-    System.out.println("Sighned " + name + " with password " + pass);
+    System.out.println("Sighned " + name);
     return Protocol.OK;
   }
 
@@ -68,9 +78,50 @@ public class ClientHandler extends Thread{
       System.out.println("No user named " + name);
       return Protocol.NAME;
     }
+    String salt = createSalt();
+    pass = hash(pass + salt) + "-" + salt;
     this.db.setPassword(name, pass);
-    System.out.println(name + " changed password to " + pass);
+    System.out.println(name + " changed password");
     return Protocol.OK;
+  }
+
+  /**
+  Make a random salt for hashing
+  @return the salt in string form
+  */
+  private String createSalt(){
+    Random rand = new Random(System.nanoTime());
+    StringBuilder salt = new StringBuilder();
+    int val;
+    while (salt.length() < SALT_LEN){
+      val = this.LOWER + (int) (rand.nextFloat() * (UPPER - LOWER + 1));
+      salt.append((char) val);
+    }
+    String saltStr = salt.toString();
+    return saltStr;
+  }
+
+  /**
+  Hash a string using sha256
+  @param base the string we would like to hash
+  @return the string hased
+  */
+  private String hash(String base) {
+    try{
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      byte[] hash = digest.digest(base.getBytes("UTF-8"));
+      StringBuffer hexString = new StringBuffer();
+
+      for (int i = 0; i < hash.length; i++) {
+        String hex = Integer.toHexString(0xff & hash[i]);
+        if(hex.length() == 1) hexString.append('0');
+        hexString.append(hex);
+      }
+
+      return hexString.toString();
+    } catch(Exception ex){
+       throw new RuntimeException(ex);
+    }
   }
 
   /**
@@ -104,7 +155,12 @@ public class ClientHandler extends Thread{
     } catch(SocketException e){
       System.err.println("Done");
     } catch (Throwable e){
+      try{
+      this.socket.close();
       System.err.println("Error on handler");
+    } catch (IOException ine){
+        System.err.println("Wow this is F'd up");
+      }
     }
   }
 }

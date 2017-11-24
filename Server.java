@@ -30,6 +30,8 @@ public class Server{
         if (userInput.equals("EXIT")){
           serverSocket.close();
           break;
+        } else if (userInput.equals("PRINT")){
+          System.out.println(db);
         }
       }
     } catch (Throwable e){
