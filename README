@@ -11,3 +11,7 @@ A simple server that in the end will be capable of:
 Current: RSA
   1) build a general class that receives a number and encrypt and decrypt with it
   2) before sending encrypt, after receiving decrypt
+
+TDL:
+    1) make prints on server synchronized |
+    2) make prints robust                 |
