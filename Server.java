@@ -7,6 +7,11 @@ This is the main class of the server and functions as main thread
 */
 public class Server{
 
+  public static synchronized void print_to_server(String msg){
+    System.out.println(msg);
+  }
+
+
   /**
   The main method of the server
   */
@@ -31,7 +36,7 @@ public class Server{
           serverSocket.close();
           break;
         } else if (userInput.equals("PRINT")){
-          System.out.println(db);
+          Server.print_to_server(db.toString());
         }
       }
     } catch (Throwable e){

@@ -13,5 +13,5 @@ Current: RSA
   2) before sending encrypt, after receiving decrypt
 
 TDL:
-    1) make prints on server synchronized |
+    1) make prints on server synchronized | DONE :-)
     2) make prints robust                 |

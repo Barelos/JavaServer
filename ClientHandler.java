@@ -32,7 +32,7 @@ public class ClientHandler extends Thread{
   private int logUser(String name, String pass){
     // test if user is in the data base
     if (!this.db.userIn(name)){
-      System.out.println("No user named " + name);
+      Server.print_to_server("No user named " + name);
       return Protocol.PASS;
     }
     // test if the password is correct
@@ -42,9 +42,9 @@ public class ClientHandler extends Thread{
     int reply = hased.equals(parts[0]) ? Protocol.OK : Protocol.PASS;
     // print and reply accordingly
     if (reply == Protocol.OK){
-      System.out.println(name + " logged in");
+      Server.print_to_server(name + " logged in");
     }else{
-      System.out.println(name + " tried to login with wrong password");
+      Server.print_to_server(name + " tried to login with wrong password");
     }
     return reply;
   }
@@ -57,13 +57,13 @@ public class ClientHandler extends Thread{
   */
   private int signUser(String name, String pass){
     if (this.db.userIn(name)){
-      System.out.println("Name " + name + " is already in");
+      Server.print_to_server("Name " + name + " is already in");
       return Protocol.NAME;
     }
     String salt = createSalt();
     pass = hash(pass + salt) + "-" + salt;
     this.db.setPassword(name, pass);
-    System.out.println("Sighned " + name);
+    Server.print_to_server("Sighned " + name);
     return Protocol.OK;
   }
 
@@ -75,13 +75,13 @@ public class ClientHandler extends Thread{
   */
   private int changePassword(String name, String pass){
     if (!this.db.userIn(name)){
-      System.out.println("No user named " + name);
+      Server.print_to_server("No user named " + name);
       return Protocol.NAME;
     }
     String salt = createSalt();
     pass = hash(pass + salt) + "-" + salt;
     this.db.setPassword(name, pass);
-    System.out.println(name + " changed password");
+    Server.print_to_server(name + " changed password");
     return Protocol.OK;
   }
 
